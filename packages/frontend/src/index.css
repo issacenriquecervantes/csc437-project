@@ -1,0 +1,270 @@
+/* Import Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* Font Families */
+:root {
+    --font-family-header: "Funnel Display", sans-serif;
+    --font-family-body: "Roboto", sans-serif;
+    --font-family-cta: var(--font-family-header);
+
+    /* Text Colors */
+    --color-text-default: rgb(55, 60, 65);
+    --color-text-accent: rgb(50, 100, 150);
+
+    /* Background Colors */
+    --bg-body: linear-gradient(135deg, rgba(225, 230, 235, 1) 0%, rgba(205, 215, 225, 1) 50%, rgba(185, 190, 200, 1) 100%);
+    --bg-body-fallback: rgb(225, 230, 235); /* Fallback for older browsers */
+    --bg-tile: rgba(255, 255, 255, 0.25);
+
+    /* Form Styles */
+    --border-form-input: solid 1px var(--color-border-default);
+    --bg-form-input: var(--bg-tile);
+
+    /* Border Colors */
+    --color-border-default: rgb(165, 180, 195);
+
+    /* Interactive States */
+    --color-hover: rgba(0, 120, 215, 0.1);
+    --color-focus: rgba(0, 120, 215, 0.2);
+}
+
+body.dark-mode {
+    /* Text Colors */
+    --color-text-default: rgb(235, 240, 245);
+    --color-text-accent: rgb(150, 200, 250);
+
+    /* Background Colors */
+    --bg-body: linear-gradient(135deg, rgba(75, 80, 85, 1) 0%, rgba(55, 60, 65, 1) 50%, rgba(35, 40, 45, 1) 100%);
+    --bg-body-fallback: rgb(75, 80, 85); /* Fallback for older browsers */
+    --bg-tile: rgba(0, 0, 0, 0.25);
+
+    /* Form Styles */
+    --border-form-input: solid 1px var(--color-border-default);
+    --bg-form-input: var(--bg-tile);
+
+    /* Border Colors */
+    --color-border-default: rgb(78, 80, 82);
+
+    /* Interactive States */
+    --color-hover: rgba(0, 150, 250, 0.1);
+    --color-focus: rgba(0, 150, 250, 0.2);
+}
+
+/* resetting default styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* setting default styles */
+body {
+    font-family: var(--font-family-body);
+    color: var(--color-text-default);
+    background: var(--bg-body);
+    min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-family-header);
+    color: var(--color-text-default);
+}
+
+a {
+    color: inherit;
+    /* makes it so it inherits the color property of its parent container */
+    text-decoration: none;
+    /* gets rid of underline since for the most part i don't want links to have an underline */
+}
+
+#root {
+    max-width: 75rem;
+    margin: auto;
+    padding: 0 2rem;
+    display: grid;
+    gap: 1rem;
+}
+
+.button {
+    display: inline-block;
+    padding: 0.75em 1em;
+    width: fit-content;
+    border: solid 1px var(--color-border-default);
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    font-family: var(--font-family-cta);
+    border-radius: 0.75em;
+}
+
+/* header styling */
+header {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1.5rem 0;
+    gap: 1rem;
+    border-bottom: solid 2px var(--color-border-default);
+    align-items: center;
+}
+
+h1 {
+    flex: 1 0 max-content;
+}
+
+/* navigation styling */
+
+nav a,
+header label {
+    font-size: 1.125em;
+}
+
+nav ul {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+nav li {
+    list-style-type: none;
+}
+
+nav li:hover,
+header label:hover {
+    border-bottom: solid 1px var(--color-border-default);
+}
+
+/* theme toggler */
+header label input {
+    display: none;
+}
+
+header label #theme-icon {
+    display: inline-block;
+    transition: transform 500ms ease;
+}
+
+header label input:checked+#theme-icon {
+    transform: rotate(180deg);
+}
+
+/* default styles main container for all apges */
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* dashboard and shared with me pages */
+
+#dashboard-projects-container,
+#shared-with-me-projects-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.project-tile {
+    border: solid 1px var(--color-border-default);
+    padding: 1.5rem;
+    flex: 1 0 20rem;
+    border-radius: 1em;
+    background: var(--bg-tile);
+}
+
+.project-tile h3 {
+    font-size: 1.5em;
+}
+
+.project-tile-client {
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.project-tile-details {
+    display: grid;
+    gap: 0.25em;
+}
+
+.project-tile-details dt {
+    font-weight: 600;
+    display: inline-block;
+}
+
+.project-tile-details dd {
+    display: inline-block;
+}
+
+.project-tile .button {
+    margin-top: 1rem;
+}
+
+/* project details page */
+
+#project-details dt {
+    font-weight: bold;
+}
+
+#project-details dd {
+    margin-bottom: 1rem;
+}
+
+/* styling forms */
+
+form {
+    display: grid;
+    gap: 1em;
+    max-width: 30rem;
+}
+
+form label {
+    display: grid;
+    gap: 0.25em;
+}
+
+form input,
+form select,
+form textarea {
+    background: var(--bg-form-input);
+    padding: 0.5rem;
+    border: var(--border-form-input);
+    border-radius: 0.5em;
+    transition-property: border, padding;
+    transition-timing-function: ease;
+    transition-duration: 50ms;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+#login-main-container a,
+#register-main-container a {
+    color: var(--color-text-accent);
+    transition: border 50ms ease;
+}
+
+#login-main-container a:hover,
+#register-main-container a:hover {
+    border-bottom: solid 1px;
+}
+
+form input:focus,
+form textarea:focus,
+form select:focus {
+    padding: 0.75rem;
+}
+
+form textarea {
+    resize: vertical;
+}
