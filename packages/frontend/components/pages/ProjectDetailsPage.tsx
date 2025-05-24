@@ -2,30 +2,12 @@ import { useParams, Link, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import NotFoundPage from "./NotFoundPage";
-
-interface Project {
-  id: string;
-  name: string;
-  client: string;
-  deadline: string;
-  status: string;
-  notes: string;
-  createdBy?: string;
-  sharedWith?: string[];
-}
+import { getProjectById, deleteProject } from "./DashboardPage";
+import { type Project } from "../../src/projectsDatabase"
 
 // to be replaced with real data fetching
-function fetchProjectById(projectId: string): Promise<Project> {
-  return Promise.resolve({
-    id: projectId,
-    name: "Client Brochure",
-    client: "Sunshine Corp",
-    deadline: "2025-06-10",
-    status: "In Progress",
-    notes: "Waiting on logo assets",
-    createdBy: "user@example.com",
-    sharedWith: ["collab1@example.com", "collab2@example.com"],
-  });
+function fetchProjectById(projectId: string) {
+  return getProjectById(projectId)
 }
 
 export default function ProjectDetailsPage() {
@@ -36,18 +18,14 @@ export default function ProjectDetailsPage() {
   //initialize a useNavigate instance
   const navigate = useNavigate();
 
-
-  const [project, setProject] = useState<Project | null>(null);
+  const [project, setProject] = useState<Project | undefined>(undefined);
   const [loading, setLoading] = useState(true);
-
 
 // if a project id is found in the URL, an attempt to fetch from the API is made, where the data is used to set Project and set Loading to false
   useEffect(() => {
     if (projectId) {
-      fetchProjectById(projectId).then((data) => {
-        setProject(data);
-        setLoading(false);
-      });
+      setProject(fetchProjectById(projectId));
+      setLoading(false);
     }
   }, [projectId]);
 
@@ -55,15 +33,15 @@ export default function ProjectDetailsPage() {
     // replace with actual deletion logic with API
     const confirmDelete = window.confirm("Are you sure you want to delete this project?");
 
-    if (confirmDelete) {
+    if (confirmDelete && projectId) {
       // simulate deletion then redirect
-      console.log(`Deleted project: ${projectId}`);
+      deleteProject(projectId)
       navigate("/");
     }
   };
 
   if (loading) return <p>Loading project...</p>;
-  if (!project) return <NotFoundPage />;
+  if (!project || project === undefined) return <NotFoundPage />;
 
   //deconstructs project
   const { name, client, deadline, status, notes, sharedWith } = project;

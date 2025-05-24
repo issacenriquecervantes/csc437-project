@@ -1,34 +1,12 @@
 import { useParams, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+// import { type Project } from "../../src/projectsDatabase"
 import moment from "moment";
-
-interface Project {
-  id: string;
-  name: string;
-  client: string;
-  deadline: string;
-  status: string;
-  notes: string;
-  sharedWith?: string[];
-}
+import { getProjectById, updateProject } from "./DashboardPage";
 
 // Mock fetch function
-function fetchProjectById(projectId: string): Promise<Project> {
-  return Promise.resolve({
-    id: projectId,
-    name: "Big Brand Redesign",
-    client: "Super Big Client",
-    deadline: "2025-04-20",
-    status: "not-started",
-    notes: "These are some notes on this big brand redesign...",
-    sharedWith: ["client@email.com"],
-  });
-}
-
-// Mock update function
-function updateProject(updatedProject: Project): Promise<void> {
-  console.log("Updating project:", updatedProject);
-  return Promise.resolve();
+function fetchProjectById(projectId: string) {
+  return getProjectById(projectId)
 }
 
 export default function EditProjectPage() {
@@ -42,36 +20,44 @@ export default function EditProjectPage() {
   const [name, setName] = useState("");
   const [client, setClient] = useState("");
   const [deadline, setDeadline] = useState("");
-  const [status, setStatus] = useState("not-started");
+  const [status, setStatus] = useState<'Not Started' | 'In Progress' | 'Completed' | 'On Hold'>("Not Started");
   const [sharedWith, setSharedWith] = useState("");
   const [notes, setNotes] = useState("");
+  const [createdBy, setCreatedBy] = useState("");
 
   useEffect(() => {
     if (projectId) {
-      fetchProjectById(projectId).then((project) => {
-        setName(project.name);
-        setClient(project.client);
-        setDeadline(moment(project.deadline).format("YYYY-MM-DD"));
-        setStatus(project.status);
-        setSharedWith(project.sharedWith?.join(", ") || "");
-        setNotes(project.notes);
-      });
+      
+      const retrievedProject = fetchProjectById(projectId);
+
+      if (retrievedProject) {
+        setName(retrievedProject.name);
+        setClient(retrievedProject.client);
+        setDeadline(moment(retrievedProject.deadline).format("YYYY-MM-DD"));
+        setStatus(retrievedProject.status);
+        setSharedWith(retrievedProject.sharedWith?.join(", ") || "");
+        setNotes(retrievedProject.notes);
+        setCreatedBy(retrievedProject.createdBy);
+      }
     }
   }, [projectId]);
 
   const handleSubmit = async () => {
-    
+
     if (!projectId) return;
 
-    await updateProject({
-      id: projectId,
-      name,
-      client,
-      deadline,
-      status,
-      notes,
-      sharedWith: sharedWith.split(",").map(email => email.trim()).filter(Boolean),
-    });
+    updateProject(
+      projectId,
+      {
+        name,
+        client,
+        deadline,
+        status,
+        notes,
+        sharedWith: sharedWith.split(",").map(email => email.trim()).filter(Boolean),
+        createdBy
+      }
+    );
 
     navigate(`/project-details/${projectId}`);
   };
@@ -126,7 +112,7 @@ export default function EditProjectPage() {
             required
             aria-label="Edit Status"
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            onChange={(e) => setStatus(e.target.value as 'Not Started' | 'In Progress' | 'Completed' | 'On Hold')}
           >
             <option value="not-started">Not Started</option>
             <option value="in-progress">In Progress</option>
@@ -138,7 +124,6 @@ export default function EditProjectPage() {
         <label>
           Shared With
           <input
-            type="email"
             id="edit-shared-width"
             placeholder="client@email.com"
             aria-label="Edit Shared With"

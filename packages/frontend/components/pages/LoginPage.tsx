@@ -9,12 +9,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
 
     // For now, just log and navigate on submit
-    console.log({ email, password });
-    // TODO: Add authentication logic here
-
+    console.log({ email, password }, event);
+    // Add authentication logic here
     navigate("/dashboard");
   }
 

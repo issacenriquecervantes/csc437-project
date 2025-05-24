@@ -14,8 +14,6 @@ const loggedIn = true;
 
 function App() {
 
-    // const navigate = useNavigate();
-
     return (
         <Router>
             <Header />

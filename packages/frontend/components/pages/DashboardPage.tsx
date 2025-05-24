@@ -1,75 +1,49 @@
 import { Link } from "react-router";
 import { ProjectCard } from "../ProjectCard";
+import { projects, type Project } from "../../src/projectsDatabase"
+
+const STORAGE_KEY = 'project_data';
+
+if (!localStorage.getItem(STORAGE_KEY)) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+}
+
+export const loadProjects = (): Project[] => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  return stored ? JSON.parse(stored) : [];
+};
+
+export const saveProjects = (projects: Project[]) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+};
+
+export const addProject = (project: Project) => {
+  const current = loadProjects();
+  saveProjects([...current, project]);
+};
+
+export const getProjectById = (id: string): Project | undefined => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) return undefined;
+
+  const projects: Project[] = JSON.parse(stored);
+  return projects.find(p => p.id === id);
+};
+
+export const updateProject = (id: string, updates: Partial<Project>) => {
+  const current = loadProjects().map(p =>
+    p.id === id ? { ...p, ...updates } : p
+  );
+  saveProjects(current);
+};
+
+export const deleteProject = (id: string) => {
+  const current = loadProjects().filter(p => p.id !== id);
+  saveProjects(current);
+};
 
 export default function DashboardPage() {
-  // Placeholder mock data
-  const myProjects = [
-    {
-      id: "1",
-      name: "Client Brochure",
-      client: "Sunshine Corp",
-      deadline: "2025-06-10",
-      status: "In Progress",
-      notes: "Waiting on logo assets",
-      createdBy: "user@example.com",
-      sharedWith: ["collab1@example.com"],
-    },
-    {
-      id: "2",
-      name: "Eco-Friendly Packaging",
-      client: "Green Goods",
-      deadline: "2025-07-01",
-      status: "Not Started",
-      notes: "Needs initial design concepts",
-      createdBy: "user@example.com",
-      sharedWith: [],
-    },
-    {
-      id: "3",
-      name: "Social Media Templates",
-      client: "Fresh Start Wellness",
-      deadline: "2025-08-15",
-      status: "Awaiting Client Feedback",
-      notes: "Sent initial drafts to client",
-      createdBy: "user@example.com",
-      sharedWith: ["designer2@example.com"],
-    },
-  ];
-
-  const sharedProjects = [
-    {
-      id: "4",
-      name: "Event Poster - Jazz Festival",
-      client: "Local Arts Council",
-      deadline: "2025-06-01",
-      status: "Complete",
-      notes: "Submitted and approved",
-      createdBy: "designer@example.com",
-      sharedWith: ["me@example.com"],
-    },
-    {
-      id: "5",
-      name: "Workshop Flyer - Creative Writing",
-      client: "Community Library",
-      deadline: "2025-06-15",
-      status: "Complete",
-      notes: "Client requested last-minute color changes",
-      createdBy: "designer@example.com",
-      sharedWith: ["me@example.com"],
-    },
-    {
-      id: "6",
-      name: "Open Mic Poster",
-      client: "City Cultural Center",
-      deadline: "2025-07-10",
-      status: "In Progress",
-      notes: "Illustrations still in progress",
-      createdBy: "designer@example.com",
-      sharedWith: ["me@example.com"],
-    },
-
-  ];
-
+  
   return (
     <main className="dashboard-main-container">
       <h2>My Projects</h2>
@@ -80,9 +54,7 @@ export default function DashboardPage() {
 
       <div id="dashboard-projects-container">
 
-        {myProjects.map((project) => (
-          <ProjectCard name={project.name} client={project.client} deadline={project.deadline} status={project.status} id={project.id} createdBy={project.createdBy} />
-        ))}
+        {loadProjects().filter(project => project.createdBy == "user@email.com").map((project) => <ProjectCard name={project.name} client={project.client} deadline={project.deadline} status={project.status} id={project.id} createdBy={project.createdBy} />)}
 
       </div>
 
@@ -90,9 +62,7 @@ export default function DashboardPage() {
 
       <div id="shared-with-me-projects-container">
 
-        {sharedProjects.map((project) => (
-          <ProjectCard name={project.name} client={project.client} deadline={project.deadline} status={project.status} id={project.id} createdBy={project.createdBy} />
-        ))}
+        {loadProjects().filter(project => project.sharedWith.includes("user@email.com")).map((project) => <ProjectCard name={project.name} client={project.client} deadline={project.deadline} status={project.status} id={project.id} createdBy={project.createdBy} />)}
 
       </div>
 

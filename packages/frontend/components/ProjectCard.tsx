@@ -12,7 +12,7 @@ interface IProjectCardProps {
 }
 
 // Placeholder for the current user's email
-const CURRENT_USER_EMAIL = "user@example.com";
+const CURRENT_USER_EMAIL = "user@email.com";
 
 export function ProjectCard({
   id,

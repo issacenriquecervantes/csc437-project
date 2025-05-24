@@ -23,9 +23,9 @@
     /* Border Colors */
     --color-border-default: rgb(165, 180, 195);
 
-    /* Interactive States */
-    --color-hover: rgba(0, 120, 215, 0.1);
-    --color-focus: rgba(0, 120, 215, 0.2);
+    --bg-button-default: rgba(255, 255, 255, 0.5);
+    --bg-button-hover: rgba(255, 255, 255, 0.75);
+    --bg-button-active: rgba(255, 255, 255, 1);
 }
 
 body.dark-mode {
@@ -43,11 +43,12 @@ body.dark-mode {
     --bg-form-input: var(--bg-tile);
 
     /* Border Colors */
-    --color-border-default: rgb(78, 80, 82);
+    --color-border-default: rgb(115, 120, 120);
 
-    /* Interactive States */
-    --color-hover: rgba(0, 150, 250, 0.1);
-    --color-focus: rgba(0, 150, 250, 0.2);
+    --bg-button-default: rgba(0, 0, 0, 0.4);
+    --bg-button-hover: rgba(0, 0, 0, 0.6);
+    --bg-button-active: rgba(0, 0, 0, 1);
+
 }
 
 /* resetting default styles */
@@ -106,6 +107,19 @@ a {
     letter-spacing: 0.05em;
     font-family: var(--font-family-cta);
     border-radius: 0.75em;
+    background-color: var(--bg-button-default);
+    font-size: 0.80rem;
+    color: var(--color-text-default);
+    transition: padding 100ms ease-in-out;
+}
+
+.button:hover {
+    background-color: var(--bg-button-hover);
+    padding-left: 1.25em;
+}
+
+.button:active {
+    background-color: var(--bg-button-active);
 }
 
 /* header styling */
@@ -181,6 +195,7 @@ main {
     flex: 1 0 20rem;
     border-radius: 1em;
     background: var(--bg-tile);
+    transition: flex 100ms ease-in-out;
 }
 
 .project-tile h3 {
@@ -267,4 +282,5 @@ form select:focus {
 
 form textarea {
     resize: vertical;
+    field-sizing: content;
 }
