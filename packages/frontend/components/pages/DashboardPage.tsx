@@ -1,47 +1,7 @@
 import { Link } from "react-router";
 import { ProjectCard } from "../ProjectCard";
-import { projects, type Project } from "../../src/projectsDatabase"
 import type IProjectDocument from "../../../backend/src/shared/IProjectDocument";
 
-const STORAGE_KEY = 'project_data';
-
-if (!localStorage.getItem(STORAGE_KEY)) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-}
-
-export const loadProjects = (): Project[] => {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored ? JSON.parse(stored) : [];
-};
-
-export const saveProjects = (projects: Project[]) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-};
-
-export const addProject = (project: Project) => {
-  const current = loadProjects();
-  saveProjects([...current, project]);
-};
-
-export const getProjectById = (id: string): Project | undefined => {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) return undefined;
-
-  const projects: Project[] = JSON.parse(stored);
-  return projects.find(p => p.id === id);
-};
-
-export const updateProject = (id: string, updates: Partial<Project>) => {
-  const current = loadProjects().map(p =>
-    p.id === id ? { ...p, ...updates } : p
-  );
-  saveProjects(current);
-};
-
-export const deleteProject = (id: string) => {
-  const current = loadProjects().filter(p => p.id !== id);
-  saveProjects(current);
-};
 
 interface IDashboardPageProps {
   projects: { ownedProjects: IProjectDocument[], sharedProjects: IProjectDocument[] }
@@ -50,8 +10,6 @@ interface IDashboardPageProps {
 }
 
 export default function DashboardPage(props: IDashboardPageProps) {
-
-  console.log(props.projects)
 
   return (
     <main className="dashboard-main-container">
