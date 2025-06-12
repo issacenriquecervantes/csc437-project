@@ -1,37 +1,85 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router";
-import { type Project } from "../../src/projectsDatabase";
-import { addProject } from "./DashboardPage";
 
-export default function AddProjectPage() {
-  const navigate = useNavigate();
+interface IAddProjectPageProps {
+  authToken: string | null;
+  handleNewProjectAdded: () => void;
+}
 
-  const [name, setName] = useState("");
-  const [client, setClient] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [status, setStatus] = useState<'Not Started' | 'In Progress' | 'Completed' | 'On Hold'>("Not Started");
-  const [sharedWith, setSharedWith] = useState("");
-  const [notes, setNotes] = useState("");
+export default function AddProjectPage(props: IAddProjectPageProps) {
 
-  const handleSubmit = () => {
+  const [name, setName] = useState<string | null>(null);
+  const [client, setClient] = useState<string | null>(null);
+  const [deadline, setDeadline] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>("Not Started");
+  const [sharedWith, setSharedWith] = useState<string | null>(null);
+  const [notes, setNotes] = useState<string | null>(null)
 
-    const newProjectData: Project = {
-      id: crypto.randomUUID(),
-      name,
-      client,
-      deadline,
-      status,
-      notes,
-      createdBy: "user@email.com",
-      sharedWith: sharedWith
-        .split(",")
-        .map(email => email.trim())
-        .filter(Boolean),
-    };
+  const [addingProject, setAddingProject] = useState(false)
 
-    addProject(newProjectData);
-    navigate(`/project-details/${newProjectData.id}`);
-  };
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null)
+
+  const navigate = useNavigate()
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setAddingProject(true);
+    setErrorMessage(null)
+    setStatusMessage("Attempting to add project...")
+
+    setTimeout(addProject, Math.random() * 2500)
+  }
+
+  function addProject() {
+    const sharedWithArray = sharedWith
+      ? sharedWith.split(",").map(email => email.trim()).filter(email => email.length > 0)
+      : [];
+
+    fetch("/api/projects/add/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${props.authToken}`
+      },
+      body: JSON.stringify({
+        name,
+        client,
+        deadline,
+        status,
+        sharedWith: sharedWithArray,
+        notes
+      })
+    })
+      .then(async (response) => {
+        if (response.ok) {
+          setStatusMessage("Project added successfully!");
+          setErrorMessage(null);
+          props.handleNewProjectAdded()
+          navigate("/dashboard")
+        } else {
+          const data = await response.json();
+          setErrorMessage(data.error || "Failed to add project.");
+          setStatusMessage(null);
+        }
+      })
+      .catch((err) => {
+        setErrorMessage("Network error: " + err.message);
+        setStatusMessage(null);
+      })
+      .finally(() => setAddingProject(false));
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function validateSharedWith(input: string): boolean {
+    if (!input.trim()) return true; // allow empty
+    return input
+      .split(",")
+      .map(email => email.trim())
+      .every(email => emailRegex.test(email));
+  }
 
   return (
     <main id="edit-project-main-container">
@@ -43,7 +91,7 @@ export default function AddProjectPage() {
           <input
             type="text"
             required
-            value={name}
+            value={name ? name : ""}
             onChange={(e) => setName(e.target.value)}
           />
         </label>
@@ -53,7 +101,7 @@ export default function AddProjectPage() {
           <input
             type="text"
             required
-            value={client}
+            value={client ? client : ""}
             onChange={(e) => setClient(e.target.value)}
           />
         </label>
@@ -63,7 +111,7 @@ export default function AddProjectPage() {
           <input
             type="date"
             required
-            value={deadline}
+            value={deadline ? deadline : ""}
             onChange={(e) => setDeadline(e.target.value)}
           />
         </label>
@@ -72,10 +120,11 @@ export default function AddProjectPage() {
           Status
           <select
             required
-            value={status}
+            value={status ? status : undefined}
             onChange={(e) =>
-              setStatus(e.target.value as Project["status"])
+              setStatus(e.target.value)
             }
+            disabled={addingProject}
           >
             <option value="Not Started">Not Started</option>
             <option value="In Progress">In Progress</option>
@@ -88,20 +137,38 @@ export default function AddProjectPage() {
           Shared With (comma-separated)
           <input
             type="text"
-            value={sharedWith}
-            onChange={(e) => setSharedWith(e.target.value)}
+            value={sharedWith ? sharedWith : ""}
+            onChange={(e) => {
+              setSharedWith(e.target.value);
+              if (!validateSharedWith(e.target.value)) {
+                e.target.setCustomValidity("Please enter valid email(s), separated by commas.");
+                e.target.reportValidity();
+              } else {
+                e.target.setCustomValidity("");
+              }
+            }}
+            disabled={addingProject}
           />
         </label>
 
         <label>
           Notes
           <textarea
-            value={notes}
+            value={notes ? notes : ""}
             onChange={(e) => setNotes(e.target.value)}
+            disabled={addingProject}
           />
         </label>
 
-        <button type="submit" className="button">Add Project</button>
+        {
+          (addingProject && statusMessage) ? <div aria-live="polite" className="status-message">
+            {statusMessage}
+          </div> : (!addingProject && errorMessage) && <div aria-live="polite" className="error-message">
+            {errorMessage}
+          </div>
+        }
+
+        <button type="submit" className="button" disabled={addingProject}>Add Project</button>
       </form>
     </main>
   );

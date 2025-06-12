@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "target": "es2023",
     "module": "NodeNext",
     "baseUrl": "./src",
@@ -9,7 +10,7 @@
     "moduleResolution": "NodeNext",
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/routes/ProtectedRoute.tsx"],
   "exclude": ["node_modules"],
   "lib": ["esnext"]
 }

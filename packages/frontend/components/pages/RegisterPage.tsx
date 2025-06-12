@@ -1,20 +1,67 @@
-import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router";
+import { useId, useRef, useState, type FormEvent } from "react";
+import { Link } from "react-router";
 
-export default function RegisterPage() {
-  const navigate = useNavigate();
+interface IRegisterPageProps {
+  onTokenGenerated: (generatedToken: string) => void;
+}
 
-  // Controlled inputs state
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+export default function RegisterPage(props: IRegisterPageProps) {
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const [email, setEmail] = useState<string | null>(null);
+  const [password, setPassword] = useState<string | null>(null);
+  const [confirmPassword, setConfirmPassword] = useState<string | null>(null);
 
-    // For now, just log and navigate on submit
-    console.log({ email, password, confirmPassword }, event);
-    // Add authentication logic here
-    navigate("/dashboard");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null)
+
+  const [registrationPending, setRegistrationPending] = useState(false);
+
+  const emailInputId = useId();
+  const passInputId = useId();
+  const confirmPassInputId = useId();
+  const confirmPassRef = useRef<HTMLInputElement>(null);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setRegistrationPending(true);
+    setErrorMessage(null)
+    setStatusMessage("Attempting to register new account...")
+
+    setTimeout(registerUser, Math.random() * 2000)
+  }
+
+  function registerUser() {
+    fetch("/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email: email, password: password })
+    }).then(async (response) => {
+      if (response.ok) {
+        console.log("Successfully created account.");
+        const token = await response.text();
+        props.onTokenGenerated(token);
+        setErrorMessage(null);
+        setStatusMessage("Successfully registered new account.")
+      } else {
+        if (response.status === 409) {
+          setErrorMessage("Email is already registered. Try again with a different email.");
+        }
+        else if (response.status === 400) {
+          setErrorMessage("Missing email or password.");
+        }
+        else {
+          setErrorMessage("Failed to register user. Please try again.");
+        }
+      }
+    }).catch((err) => {
+      setErrorMessage("Registration failed. Please try again.");
+      console.log(err)
+      setRegistrationPending(false);
+    }).finally(() =>
+      setRegistrationPending(false))
   }
 
   return (
@@ -24,46 +71,66 @@ export default function RegisterPage() {
         Already have an account? <Link to="/login">Login</Link>
       </p>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="register-email">
+        <label htmlFor={emailInputId}>
           Email
           <input
-            id="register-email"
+            id={emailInputId}
             type="email"
             required
             autoComplete="email"
             placeholder="alice@email.com"
-            value={email}
+            value={email ? email : ""}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={registrationPending}
           />
         </label>
 
-        <label htmlFor="register-password">
+        <label htmlFor={passInputId}>
           Password
           <input
-            id="register-password"
+            id={passInputId}
             type="password"
             required
-            autoComplete="current-password"
+            autoComplete="new-password"
             placeholder="*****"
-            value={password}
+            value={password ? password : ""}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={registrationPending}
           />
         </label>
 
-        <label htmlFor="register-confirm-password">
+        <label htmlFor={confirmPassInputId}>
           Confirm Password
           <input
-            id="register-confirm-password"
+            id={confirmPassInputId}
             type="password"
             required
-            autoComplete="current-password"
+            autoComplete="new-password"
             placeholder="*****"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            value={confirmPassword ? confirmPassword : ""}
+            ref={confirmPassRef}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              if (password !== e.target.value) {
+                e.target.setCustomValidity("Passwords do not match.");
+                e.target.reportValidity();
+                return;
+              } else {
+                e.target.setCustomValidity("");
+              }
+            }
+            }
+            disabled={registrationPending}
           />
         </label>
-
-        <button type="submit" className="button">Register</button>
+        {
+          (registrationPending && statusMessage) ? <div aria-live="polite" className="status-message">
+            {statusMessage}
+          </div> : (!registrationPending && errorMessage) && <div aria-live="polite" className="error-message">
+            {errorMessage}
+          </div>
+        }
+        <button type="submit" className="button" disabled={registrationPending}>Register Account</button>
       </form>
     </main>
   );

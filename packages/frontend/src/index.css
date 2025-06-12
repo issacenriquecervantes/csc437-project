@@ -10,6 +10,7 @@
     /* Text Colors */
     --color-text-default: rgb(55, 60, 65);
     --color-text-accent: rgb(50, 100, 150);
+    --color-text-error: rgb(225, 40, 40);
 
     /* Background Colors */
     --bg-body: linear-gradient(135deg, rgba(225, 230, 235, 1) 0%, rgba(205, 215, 225, 1) 50%, rgba(185, 190, 200, 1) 100%);
@@ -22,6 +23,10 @@
 
     /* Border Colors */
     --color-border-default: rgb(165, 180, 195);
+    --color-border-not-started: var(--color-border-default);
+    --color-border-in-progress: rgb(240, 180, 120);
+    --color-border-completed: rgb(120, 180, 120);
+    --color-border-on-hold: rgb(240, 120, 120);
 
     --bg-button-default: rgba(255, 255, 255, 0.5);
     --bg-button-hover: rgba(255, 255, 255, 0.75);
@@ -32,6 +37,7 @@ body.dark-mode {
     /* Text Colors */
     --color-text-default: rgb(235, 240, 245);
     --color-text-accent: rgb(150, 200, 250);
+    --color-text-error: rgb(255, 150, 150);
 
     /* Background Colors */
     --bg-body: linear-gradient(135deg, rgba(75, 80, 85, 1) 0%, rgba(55, 60, 65, 1) 50%, rgba(35, 40, 45, 1) 100%);
@@ -44,6 +50,10 @@ body.dark-mode {
 
     /* Border Colors */
     --color-border-default: rgb(115, 120, 120);
+    --color-border-not-started: var(--color-border-default);
+    --color-border-in-progress: rgb(140, 80, 20);
+    --color-border-completed: rgb(40, 100, 40);
+    --color-border-on-hold: rgb(160, 40, 40);
 
     --bg-button-default: rgba(0, 0, 0, 0.4);
     --bg-button-hover: rgba(0, 0, 0, 0.6);
@@ -115,7 +125,7 @@ a {
 
 .button:hover {
     background-color: var(--bg-button-hover);
-    padding-left: 1.25em;
+    padding-left: 1.5em;
 }
 
 .button:active {
@@ -138,6 +148,12 @@ h1 {
 
 /* navigation styling */
 
+.header-links {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+}
+
 nav a,
 header label {
     font-size: 1.125em;
@@ -146,7 +162,6 @@ header label {
 nav ul {
     display: flex;
     gap: 1rem;
-    flex-wrap: wrap;
 }
 
 nav li {
@@ -196,6 +211,26 @@ main {
     border-radius: 1em;
     background: var(--bg-tile);
     transition: flex 100ms ease-in-out;
+}
+
+.project-tile:hover {
+    border-width: 2px;
+}
+
+.project-tile.not-started {
+    border-color: var(--color-border-not-started)
+}
+
+.project-tile.in-progress {
+    border-color: var(--color-border-in-progress)
+}
+
+.project-tile.completed {
+    border-color: var(--color-border-completed)
+}
+
+.project-tile.on-hold {
+    border-color: var(--color-border-on-hold)
 }
 
 .project-tile h3 {
@@ -283,4 +318,12 @@ form select:focus {
 form textarea {
     resize: vertical;
     field-sizing: content;
+}
+
+.status-message {
+    color: var(--color-text-accent)
+}
+
+.error-message {
+    color: var(--color-text-error);
 }

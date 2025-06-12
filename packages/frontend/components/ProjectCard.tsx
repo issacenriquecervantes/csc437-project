@@ -9,63 +9,44 @@ interface IProjectCardProps {
   status: string;
   createdBy?: string;
   sharedWith?: string[];
+  owned: boolean;
 }
 
-// Placeholder for the current user's email
-const CURRENT_USER_EMAIL = "user@email.com";
-
-export function ProjectCard({
-  id,
-  name,
-  client,
-  deadline,
-  status,
-  createdBy,
-  sharedWith,
-}: IProjectCardProps) {
-
-  const isCreatedByUser = createdBy === CURRENT_USER_EMAIL;
-  const formattedDeadline = moment(deadline).format("MMMM D, YYYY");
+export function ProjectCard(props: IProjectCardProps) {
+  const formattedDeadline = moment(props.deadline).format("MMMM D, YYYY");
 
   return (
-    <div className="project-tile">
-
-      <h3>{name}</h3>
-      <p className="project-tile-client">{client}</p>
+    <div className={`project-tile ${props.status.toLowerCase().split(" ").join("-")}`}>
+      <h3>{props.name}</h3>
+      <p className="project-tile-client">{props.client}</p>
 
       <dl className="project-tile-details">
         <div>
-          <dt>Due:</dt>
-          {" "}
-          <dd>{formattedDeadline}</dd>
+          <dt>Due:</dt> <dd>{formattedDeadline}</dd>
         </div>
 
         <div>
-          <dt>Status:</dt>
-          {" "}
-          <dd>{status}</dd>
+          <dt>Status:</dt> <dd>{props.status}</dd>
         </div>
 
-        {isCreatedByUser ? (
+        {props.owned ? (
           <div>
-            <dt>Shared With:</dt>
-            {" "}
-            <dd>
-              {sharedWith && sharedWith.length > 0
-                ? sharedWith.join(", ")
-                : "Not Shared"}
-            </dd>
+            {props.sharedWith && props.sharedWith.length > 0 && (
+              <>
+                <dt>Shared With:</dt> <dd>{props.sharedWith.join(", ")}</dd>
+              </>
+            )}
           </div>
         ) : (
           <div>
-            <dt>Created By:</dt>
-            {" "}
-            <dd>{createdBy}</dd>
+            <dt>Created By:</dt> <dd>{props.createdBy}</dd>
           </div>
         )}
       </dl>
 
-      <Link to={`/project-details/${id}`} className="button">Open Project</Link>
+      <Link to={`/project-details/${props.id}`} className="button">
+        Open Project
+      </Link>
     </div>
   );
 }

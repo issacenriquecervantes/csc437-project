@@ -1,0 +1,62 @@
+### Register user
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "email" : "alice@email.com",
+    "password" : "password"
+}
+
+### Log in user
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email" : "alice@email.com",
+    "password" : "okay"
+}
+
+### Fetch Projects
+GET http://localhost:3000/api/projects
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlQGVtYWlsLmNvbSIsImlhdCI6MTc0OTY5MjYyOSwiZXhwIjoxNzQ5Nzc5MDI5fQ.Ikx-4QA4rH57xYVddDfR_xapx3QAg3HIEKCnwqnFH14
+
+### Fetch Specific Projects
+GET http://localhost:3000/api/projects/684765efe688c248a5b754b6
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlQGVtYWlsLmNvbSIsImlhdCI6MTc0OTU3NjMxMiwiZXhwIjoxNzQ5NjYyNzEyfQ.L0_M_Wj0SUB0ktBid5Uic63tWHr_2hKoopqXO1T_VG0
+
+
+### Delete Projects
+DELETE http://localhost:3000/api/projects/delete/684a5bd1e0fdb75b2222b3db
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlQGVtYWlsLmNvbSIsImlhdCI6MTc0OTY5MjYyOSwiZXhwIjoxNzQ5Nzc5MDI5fQ.Ikx-4QA4rH57xYVddDfR_xapx3QAg3HIEKCnwqnFH14
+
+### Add Projects
+POST http://localhost:3000/api/projects/add/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlQGVtYWlsLmNvbSIsImlhdCI6MTc0OTY5MjYyOSwiZXhwIjoxNzQ5Nzc5MDI5fQ.Ikx-4QA4rH57xYVddDfR_xapx3QAg3HIEKCnwqnFH14
+Content-Type: application/json
+
+{
+    "name": "string",
+    "owner": "string",
+    "sharedWith": ["alice@email.com"],
+    "client": "Client",
+    "deadline": "2025-12-31",
+    "status": "In Progress",
+    "notes": "some notes"
+}
+
+### Add Projects
+PATCH http://localhost:3000/api/projects/edit/684a659755cb73b14aba07bd
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsaWNlQGVtYWlsLmNvbSIsImlhdCI6MTc0OTY5MjYyOSwiZXhwIjoxNzQ5Nzc5MDI5fQ.Ikx-4QA4rH57xYVddDfR_xapx3QAg3HIEKCnwqnFH14
+Content-Type: application/json
+
+{
+    "name": "Edited Name",
+    "sharedWith": ["issac@email.com"],
+    "client": "Edited Project Again",
+    "deadline": "2025-12-31",
+    "status": "In Progress",
+    "notes": "some notes"
+}
+
+
+

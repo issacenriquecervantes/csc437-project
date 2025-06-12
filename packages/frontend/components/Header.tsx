@@ -9,12 +9,16 @@ interface NavLink {
     href: string;
 }
 
+interface IHeaderProps {
+    handleDashboardReload: () => void;
+}
+
 //sets the default navigation links, these can edited for scalibility
 const DEFAULT_NAV_LINKS: NavLink[] = [
     { text: "Dashboard", href: "/" }
 ];
 
-export default function Header() {
+export default function Header(props: IHeaderProps) {
 
     //gets the current location
     const { pathname } = useLocation();
@@ -24,7 +28,6 @@ export default function Header() {
 
     //creates booleans indicating whether the current page is an auth or dashboard
     const isAuthPage = pathname === "/login" || pathname === "/register";
-    const isDashboard = pathname === "/dashboard";
 
     useEffect(() => {
         document.body.classList.toggle("dark-mode", isDark);
@@ -37,12 +40,14 @@ export default function Header() {
                 <Link to="/">GrC Project Manager</Link>
             </h1>
 
-            {(!isAuthPage && !isDashboard) && (
+            <div className="header-links">
+
+            {(!isAuthPage) && (
                 <nav aria-label="Main navigation">
                     <ul>
                         {DEFAULT_NAV_LINKS.map(({ text, href }) => (
                             <li key={href}>
-                                <Link to={href}>{text}</Link>
+                                <Link to={href} onClick={props.handleDashboardReload}>{text}</Link>
                             </li>
                         ))}
                     </ul>
@@ -61,6 +66,8 @@ export default function Header() {
                 {" "}
                 <FontAwesomeIcon icon={faCircleHalfStroke} id="theme-icon" />
             </label>
+
+            </div>
         </header>
     );
 }
