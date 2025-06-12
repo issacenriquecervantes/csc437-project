@@ -18,11 +18,16 @@ app.use(express.json());
 
 app.locals.JWT_SECRET = JWT_SECRET;
 
-registerProjectRoutes(app, new ProjectProvider(mongoClient))
-registerAuthRoutes(app, new CredentialsProvider(mongoClient))
+registerProjectRoutes(app, new ProjectProvider(mongoClient));
+registerAuthRoutes(app, new CredentialsProvider(mongoClient));
+
+// Serve static frontend files
+import path from "path";
+app.use(express.static(path.join(__dirname, "../../../frontend/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../../frontend/dist/index.html"));
+});
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
-
-
