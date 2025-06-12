@@ -52,9 +52,6 @@ export class CredentialsProvider {
         //generate hashed password from plaintext password and salt
         const hashedPassword = await bcrypt.hash(plaintextPassword, salt)
 
-        console.log(`salt: ${salt}`)
-        console.log(`hashpswd: ${hashedPassword}`)
-
         //insert user into users and user creds collections
         await this.usersCollection.insertOne({ _id })
         await this.userCredsCollection.insertOne({ _id, password: hashedPassword })
