@@ -91,8 +91,6 @@ export function registerProjectRoutes(
             try {
                 const deleted = await projectProvider.deleteProjectById(email, projectId);
 
-                console.log(deleted)
-
                 if (deleted) {
                     res.json({ message: "Project successfully deleted." });
                 } else {
